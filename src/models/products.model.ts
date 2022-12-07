@@ -6,6 +6,7 @@ import {Stores} from './stores.model';
 export class Products extends Entity {
   @property({
     type: 'string',
+    mongodb: {dataType: 'ObjectId'},
     id: true,
     generated: false,
   })
@@ -41,10 +42,14 @@ export class Products extends Entity {
   })
   quantity: number;
 
-  @belongsTo(() => Categories)
-  categoryId: number;
+  @belongsTo(() => Categories, {}, {
+    mongodb: {dataType: 'ObjectId'},
+  })
+  categoryId: string;
 
-  @belongsTo(() => Stores)
+  @belongsTo(() => Stores, {}, {
+    mongodb: {dataType: 'ObjectId'},
+  })
   storeId: number;
 
   @property({

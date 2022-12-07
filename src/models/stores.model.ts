@@ -4,6 +4,7 @@ import {Entity, model, property} from '@loopback/repository';
 export class Stores extends Entity {
   @property({
     type: 'string',
+    mongodb: {dataType: 'ObjectId'},
     id: true,
     generated: false,
   })

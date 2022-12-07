@@ -4,6 +4,7 @@ import {Entity, model, property} from '@loopback/repository';
 export class Users extends Entity {
   @property({
     type: 'string',
+    mongodb: {dataType: 'ObjectId'},
     id: true,
     generated: false,
   })
@@ -12,12 +13,22 @@ export class Users extends Entity {
   @property({
     type: 'string',
     required: true,
+    mongodb: {
+      index: {
+        unique: true
+      }
+    }
   })
   name: string;
 
   @property({
     type: 'string',
     required: true,
+    mongodb: {
+      index: {
+        unique: true
+      }
+    }
   })
   email: string;
 
@@ -40,22 +51,16 @@ export class Users extends Entity {
   address: string;
 
   @property({
-    type: 'number',
+    type: 'date',
     required: true,
   })
-  status: number;
+  createdAt: Date;
 
   @property({
     type: 'date',
     required: true,
   })
-  createdAt: string;
-
-  @property({
-    type: 'date',
-    required: true,
-  })
-  updatedAt: string;
+  updatedAt: Date;
 
   constructor(data?: Partial<Users>) {
     super(data);
