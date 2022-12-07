@@ -2,7 +2,11 @@ import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Categories} from './categories.model';
 import {Stores} from './stores.model';
 
-@model()
+@model({
+  settings: {
+    strictObjectIDCoercion: true,
+  }
+})
 export class Products extends Entity {
   @property({
     type: 'string',
@@ -15,6 +19,18 @@ export class Products extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      pattern: '^([a-zA-Z0-9]{4,10})$',
+    },
+  })
+  code: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    jsonSchema: {
+      minLength: 4,
+    },
   })
   name: string;
 
@@ -28,7 +44,13 @@ export class Products extends Entity {
     type: 'string',
     required: true,
   })
-  code: string;
+  brand: string;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  quantity: number;
 
   @property({
     type: 'number',
@@ -37,33 +59,35 @@ export class Products extends Entity {
   price: number;
 
   @property({
-    type: 'number',
+    type: 'boolean',
     required: true,
+    default: false,
   })
-  quantity: number;
-
-  @belongsTo(() => Categories, {}, {
-    mongodb: {dataType: 'ObjectId'},
-  })
-  categoryId: string;
-
-  @belongsTo(() => Stores, {}, {
-    mongodb: {dataType: 'ObjectId'},
-  })
-  storeId: number;
+  enabled: boolean;
 
   @property({
     type: 'date',
     required: true,
   })
-  createdAt: string;
+  createdAt: Date;
 
   @property({
     type: 'date',
     required: true,
     default: () => new Date(),
   })
-  updatedAt: string;
+  updatedAt: Date;
+
+  @belongsTo(() => Categories, {}, {
+    mongodb: {dataType: 'ObjectId'},
+  })
+  categoriesId: string;
+
+
+  @belongsTo(() => Stores, {}, {
+    mongodb: {dataType: 'ObjectId'},
+  })
+  storesId: string;
 
   constructor(data?: Partial<Products>) {
     super(data);
@@ -71,7 +95,7 @@ export class Products extends Entity {
 }
 
 export interface ProductRelations {
-  // describe navigational properties here
+
 }
 
 export type ProductWithRelations = Products & ProductRelations;

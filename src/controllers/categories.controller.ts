@@ -1,8 +1,11 @@
 // Uncomment these imports to begin using these cool features!
 
+import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
+import {del, get, getModelSchemaRef, param, patch, post, put, requestBody, Response, RestBindings} from '@loopback/rest';
+import {ErrorHandler} from '../common/ErrorHandler';
 import {Categories} from '../models/categories.model';
+import {Products} from '../models/products.model';
 import {CategoriesRepository} from '../repositories/categories.repository';
 
 // import {inject} from '@loopback/core';
@@ -11,6 +14,7 @@ import {CategoriesRepository} from '../repositories/categories.repository';
 export class CategoriesController {
   constructor(
     @repository(CategoriesRepository) protected categoriesRepo: CategoriesRepository,
+    @inject(RestBindings.Http.RESPONSE) private response: Response
   ) { }
 
   @get('/categories', {
@@ -28,8 +32,14 @@ export class CategoriesController {
       },
     },
   })
-  async findCategories(): Promise<Categories[]> {
-    return this.categoriesRepo.find();
+  async findCategories(@param.query.boolean('showProducts') showProducts: boolean): Promise<Categories[]> {
+    return this.categoriesRepo.find({include: showProducts ? ['products'] : [], where: {enabled: true}});
+  }
+
+  @get('/categories/{id}/products')
+  async findProductsByCategoryId(@param.path.string('id') id: string): Promise<Products[] | undefined> {
+    const ret = await this.categoriesRepo.find({include: ['products'], where: {enabled: true, id: id}});
+    return ret[0]?.products;
   }
 
   @post('/categories')
@@ -43,10 +53,15 @@ export class CategoriesController {
       },
     },
   })
-  category: Omit<Categories, 'id'>,): Promise<Categories> {
-    category.createdAt = new Date();
-    category.updatedAt = new Date();
-    return this.categoriesRepo.create(category);
+  category: Omit<Categories, 'id'>,): Promise<Categories | Response> {
+    try {
+      category.createdAt = new Date();
+      category.updatedAt = new Date();
+      return await this.categoriesRepo.create(category);
+    }
+    catch (err) {
+      return ErrorHandler(this.response, err)
+    }
   }
 
   @put('/categories/{id}')

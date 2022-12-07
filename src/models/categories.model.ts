@@ -1,6 +1,11 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Products} from './products.model';
 
-@model()
+@model({
+  settings: {
+    strictObjectIDCoercion: true,
+  }
+})
 export class Categories extends Entity {
   @property({
     type: 'string',
@@ -13,6 +18,9 @@ export class Categories extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: {
+      pattern: '^([a-zA-Z0-9]{2,})$',
+    },
   })
   code: string;
 
@@ -34,6 +42,7 @@ export class Categories extends Entity {
   })
   enabled: boolean;
 
+
   @property({
     type: 'date',
     required: true,
@@ -47,13 +56,16 @@ export class Categories extends Entity {
   })
   updatedAt: Date;
 
+  @hasMany(() => Products, {keyTo: 'storesId'})
+  products?: Products[];
+
   constructor(data?: Partial<Categories>) {
     super(data);
   }
 }
 
 export interface CategoryRelations {
-  // describe navigational properties here
+  products?: Products[];
 }
 
 export type CategoryWithRelations = Categories & CategoryRelations;
