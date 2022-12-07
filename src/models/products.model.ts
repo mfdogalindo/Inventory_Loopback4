@@ -55,6 +55,9 @@ export class Products extends Entity {
   @property({
     type: 'number',
     required: true,
+    jsonSchema: {
+      minimum: 1
+    }
   })
   price: number;
 

@@ -56,7 +56,7 @@ export class Categories extends Entity {
   })
   updatedAt: Date;
 
-  @hasMany(() => Products, {keyTo: 'storesId'})
+  @hasMany(() => Products, {keyTo: 'categoriesId'})
   products?: Products[];
 
   constructor(data?: Partial<Categories>) {

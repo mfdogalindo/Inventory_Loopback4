@@ -3,6 +3,7 @@
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {get, getModelSchemaRef, param, post, requestBody, Response, RestBindings} from '@loopback/rest';
+import {Pageable} from '../models/pageable';
 import {Products} from '../models/products.model';
 import {Stores} from '../models/stores.model';
 import {ProductsRepository, StoresRepository} from '../repositories';
@@ -27,27 +28,6 @@ export class StoresController {
     return this.storesRepo.findById(id);
   }
 
-  @get('/stores/{storeId}/products')
-  async findProductsByStoreId(@param.path.string('storeId') storeId: string): Promise<Products[]> {
-    return this.storesRepo.products(storeId).find(
-    );
-  }
-
-  @get('/stores/{id}/products/{pid}')
-  async findProductByStoreId(id: string, pid: string): Promise<Stores> {
-    return this.storesRepo.findById(id, {
-      include: [
-        {
-          relation: 'products',
-          scope: {
-            where: {
-              id: pid,
-            },
-          },
-        },
-      ],
-    });
-  }
 
   @post('/stores')
   async createStores(@requestBody({
@@ -64,6 +44,23 @@ export class StoresController {
     store.createdAt = new Date();
     store.updatedAt = new Date();
     return this.storesRepo.create(store);
+  }
+
+  @get('/stores/{storeId}/products')
+  async findProductsByStoreId(
+    @param.path.string('storeId') storeId: string,
+    @param.query.number('page') page = 1,
+    @param.query.number('limit') limit = 10,
+  ): Promise<Pageable<Products>> {
+    const skip: number = (page - 1) * limit;
+    const ret = await this.storesRepo.findByIdAndEnabledCategories(storeId, limit, skip)
+    return {
+      data: ret,
+      meta: {
+        page,
+        limit, º
+      }
+    }
   }
 
   @post('/stores/{storeId}/products')
