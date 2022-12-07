@@ -1,6 +1,11 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Products, ProductWithRelations} from './products.model';
 
-@model()
+@model({
+  settings: {
+    strictObjectIDCoercion: true,
+  }
+})
 export class Stores extends Entity {
   @property({
     type: 'string',
@@ -20,44 +25,29 @@ export class Stores extends Entity {
     type: 'string',
     required: true,
   })
-  description: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  image: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
   address: string;
 
   @property({
-    type: 'string',
+    type: 'boolean',
     required: true,
   })
-  phone: string;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  status: number;
+  enabled: boolean;
 
   @property({
     type: 'date',
     required: true,
   })
-  createdAt: string;
+  createdAt: Date;
 
   @property({
     type: 'date',
     required: true,
     default: () => new Date(),
   })
-  updatedAt: string;
+  updatedAt: Date;
+
+  @hasMany(() => Products, {keyTo: 'categoriesId'})
+  products?: Products[];
 
   constructor(data?: Partial<Stores>) {
     super(data);
@@ -65,7 +55,7 @@ export class Stores extends Entity {
 }
 
 export interface StoresRelations {
-  // describe navigational properties here
+  products?: ProductWithRelations[];
 }
 
 export type StoresWithRelations = Stores & StoresRelations;
