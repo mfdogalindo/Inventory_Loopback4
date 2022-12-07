@@ -1,14 +1,13 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
-import {Products} from './products.model';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Stores extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: false,
   })
-  id?: number;
+  id?: string;
 
   @property({
     type: 'string',
@@ -55,11 +54,9 @@ export class Stores extends Entity {
   @property({
     type: 'date',
     required: true,
+    default: () => new Date(),
   })
   updatedAt: string;
-
-  @hasMany(() => Products)
-  products: Products[];
 
   constructor(data?: Partial<Stores>) {
     super(data);

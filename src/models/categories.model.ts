@@ -3,11 +3,17 @@ import {Entity, model, property} from '@loopback/repository';
 @model()
 export class Categories extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: false,
   })
-  id?: number;
+  id?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  code: string;
 
   @property({
     type: 'string',
@@ -22,46 +28,23 @@ export class Categories extends Entity {
   description: string;
 
   @property({
-    type: 'string',
+    type: 'boolean',
     required: true,
   })
-  image: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  icon: string;
-
-  @property({
-    type: 'string',
-    required: true,
-  })
-  color: string;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  parentIsd: number;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  status: number;
+  enabled: boolean;
 
   @property({
     type: 'date',
     required: true,
   })
-  createdAt: string;
+  createdAt: Date;
 
   @property({
     type: 'date',
     required: true,
+    default: () => new Date(),
   })
-  updatedAt: string;
+  updatedAt: Date;
 
   constructor(data?: Partial<Categories>) {
     super(data);

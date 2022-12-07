@@ -1,13 +1,15 @@
-import {Entity, model, property} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {Categories} from './categories.model';
+import {Stores} from './stores.model';
 
 @model()
 export class Products extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
     generated: false,
   })
-  id?: number;
+  id?: string;
 
   @property({
     type: 'string',
@@ -25,7 +27,7 @@ export class Products extends Entity {
     type: 'string',
     required: true,
   })
-  image: string;
+  code: string;
 
   @property({
     type: 'number',
@@ -37,19 +39,13 @@ export class Products extends Entity {
     type: 'number',
     required: true,
   })
-  discount: number;
+  quantity: number;
 
-  @property({
-    type: 'number',
-    required: true,
-  })
+  @belongsTo(() => Categories)
   categoryId: number;
 
-  @property({
-    type: 'number',
-    required: true,
-  })
-  status: number;
+  @belongsTo(() => Stores)
+  storeId: number;
 
   @property({
     type: 'date',
@@ -60,6 +56,7 @@ export class Products extends Entity {
   @property({
     type: 'date',
     required: true,
+    default: () => new Date(),
   })
   updatedAt: string;
 
