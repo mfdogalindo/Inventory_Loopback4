@@ -7,8 +7,8 @@ import {Products} from '../models/products.model';
 import {ProductsRepository} from '../repositories';
 
 // import {inject} from '@loopback/core';
-
-
+import {authenticate} from '@loopback/authentication';
+@authenticate('jwt')
 export class ProductsController {
   constructor(
     @repository(ProductsRepository) protected productsRepo: ProductsRepository,
@@ -37,11 +37,11 @@ export class ProductsController {
 
   @patch('/products/{id}/enable')
   async enableProductById(@param.path.string('id') id: string): Promise<void> {
-    return this.productsRepo.updateById(id, {enabled: true});
+    return this.productsRepo.updateById(id, {enabled: true, updatedAt: new Date()});
   }
 
   @del('/products/{id}')
   async deleteProductById(@param.path.string('id') id: string): Promise<void> {
-    return this.productsRepo.updateById(id, {enabled: false});
+    return this.productsRepo.updateById(id, {enabled: false, updatedAt: new Date()});
   }
 }

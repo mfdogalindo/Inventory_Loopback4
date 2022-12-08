@@ -1,66 +1,155 @@
-// Uncomment these imports to begin using these cool features!
-
+import {authenticate, TokenService} from '@loopback/authentication';
+import {
+  Credentials,
+  MyUserService,
+  TokenServiceBindings,
+  User,
+  UserRepository,
+  UserServiceBindings
+} from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
-import {repository} from '@loopback/repository';
-import {get, getModelSchemaRef, post, requestBody, Response, RestBindings} from '@loopback/rest';
-import bycript from 'bcrypt';
-import {Users} from '../models/users.model';
-import {UsersRepository} from '../repositories';
+import {model, property, repository} from '@loopback/repository';
+import {
+  get,
+  getModelSchemaRef,
+  post,
+  requestBody,
+  SchemaObject
+} from '@loopback/rest';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import {genSalt, hash} from 'bcryptjs';
+import _ from 'lodash';
 
-// import {inject} from '@loopback/core';
+@model()
+export class NewUserRequest extends User {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  password: string;
+}
 
+const CredentialsSchema: SchemaObject = {
+  type: 'object',
+  required: ['email', 'password'],
+  properties: {
+    email: {
+      type: 'string',
+      format: 'email',
+    },
+    password: {
+      type: 'string',
+      minLength: 8,
+    },
+  },
+};
 
-export class UsersController {
+export const CredentialsRequestBody = {
+  description: 'The input of login function',
+  required: true,
+  content: {
+    'application/json': {schema: CredentialsSchema},
+  },
+};
+
+export class UserController {
   constructor(
-    @repository(UsersRepository) protected usersRepo: UsersRepository,
-    @inject(RestBindings.Http.RESPONSE) private response: Response
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile,
+    @repository(UserRepository) protected userRepository: UserRepository,
   ) { }
 
-  @get('/users/{id}')
-  async findUsersById(id: string): Promise<Users> {
-    const usr = await this.usersRepo.findById(id);
-    usr.password = '*****';
-    return usr;
-  }
-
-  @post('/users')
-  async createUsers(@requestBody({
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Users, {
-          title: 'NewUser',
-          exclude: ['id', 'createdAt', 'updatedAt'],
-        }),
+  @post('/users/login', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
       },
     },
   })
-  user: Omit<Users, 'id'>,): Promise<Users> {
-    user.createdAt = new Date();
-    user.updatedAt = new Date();
-    user.password = bycript.hashSync(user.password, 10);
-    return this.usersRepo.create(user);
+  async login(
+    @requestBody(CredentialsRequestBody) credentials: Credentials,
+  ): Promise<{token: string}> {
+    // ensure the user exists, and the password is correct
+    const user = await this.userService.verifyCredentials(credentials);
+    // convert a User object into a UserProfile object (reduced set of properties)
+    const userProfile = this.userService.convertToUserProfile(user);
+
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
+    return {token};
   }
 
-  @post('/users/login')
-  async login(@requestBody({
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Users, {
-          title: 'LoginUser',
-          exclude: ['id', 'name', 'phone', 'address', 'createdAt', 'updatedAt'],
-        }),
+  @authenticate('jwt')
+  @get('/whoAmI', {
+    responses: {
+      '200': {
+        description: 'Return current user',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'string',
+            },
+          },
+        },
       },
     },
   })
-  user: Omit<Users, 'id'>,): Promise<Users | Response> {
-    const usr = await this.usersRepo.findOne({where: {email: user.email}});
-    if (usr) {
-      if (bycript.compareSync(user.password, usr.password)) {
-        usr.password = '*****';
-        return usr;
-      }
-    }
-    return this.response.set('WWW-Authenticate', 'Basic').status(401).send('Unauthorized');
+  async whoAmI(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+  ): Promise<string> {
+    return currentUserProfile[securityId];
   }
 
+  @post('/signup', {
+    responses: {
+      '200': {
+        description: 'User',
+        content: {
+          'application/json': {
+            schema: {
+              'x-ts-type': User,
+            },
+          },
+        },
+      },
+    },
+  })
+  async signUp(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(NewUserRequest, {
+            title: 'NewUser',
+          }),
+        },
+      },
+    })
+    newUserRequest: NewUserRequest,
+  ): Promise<User> {
+    const password = await hash(newUserRequest.password, await genSalt());
+    const savedUser = await this.userRepository.create(
+      _.omit(newUserRequest, 'password'),
+    );
+
+    await this.userRepository.userCredentials(savedUser.id).create({password});
+
+    return savedUser;
+  }
 }

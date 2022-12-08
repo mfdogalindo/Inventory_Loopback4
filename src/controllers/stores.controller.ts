@@ -1,20 +1,21 @@
 // Uncomment these imports to begin using these cool features!
 
+import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {get, getModelSchemaRef, param, post, requestBody, Response, RestBindings} from '@loopback/rest';
+import {del, get, getModelSchemaRef, param, patch, post, requestBody, Response, RestBindings} from '@loopback/rest';
 import {Pageable} from '../models/pageable';
 import {Products} from '../models/products.model';
 import {Stores} from '../models/stores.model';
-import {ProductsRepository, StoresRepository} from '../repositories';
-
+import {CategoriesRepository, ProductsRepository, StoresRepository} from '../repositories';
 // import {inject} from '@loopback/core';
 
-
+@authenticate('jwt')
 export class StoresController {
   constructor(
     @repository(StoresRepository) protected storesRepo: StoresRepository,
     @repository(ProductsRepository) protected productsRepo: ProductsRepository,
+    @repository(CategoriesRepository) protected categoriesRepo: CategoriesRepository,
     @inject(RestBindings.Http.RESPONSE) private response: Response
   ) { }
 
@@ -27,7 +28,6 @@ export class StoresController {
   async findStoresById(id: string): Promise<Stores> {
     return this.storesRepo.findById(id);
   }
-
 
   @post('/stores')
   async createStores(@requestBody({
@@ -51,15 +51,20 @@ export class StoresController {
     @param.path.string('storeId') storeId: string,
     @param.query.number('page') page = 1,
     @param.query.number('limit') limit = 10,
-  ): Promise<Pageable<Products>> {
-    const skip: number = (page - 1) * limit;
-    const ret = await this.storesRepo.findByIdAndEnabledCategories(storeId, limit, skip)
-    return {
-      data: ret,
-      meta: {
-        page,
-        limit, º
+  ): Promise<Pageable<Products> | Response> {
+    const checkStore = await this.storesRepo.findById(storeId)
+    if (checkStore.enabled) {
+      const skip: number = (page - 1) * limit;
+      const ret = await this.storesRepo.findByIdAndEnabledCategories(storeId, limit, skip)
+      return {
+        data: ret,
+        meta: {
+          page,
+          limit,
+        }
       }
+    } else {
+      return this.response.status(400).send('Store is not enabled');
     }
   }
 
@@ -74,11 +79,30 @@ export class StoresController {
       },
     },
   })
-  product: Omit<Products, 'id'>, @param.path.string('storeId') storeId: string): Promise<Products> {
-    //product.storesId = storeId;
-    product.createdAt = new Date();
-    product.updatedAt = new Date();
-    return this.productsRepo.create(product);
+  product: Omit<Products, 'id'>, @param.path.string('storeId') storeId: string): Promise<Products | Response> {
+    const checkStore = await this.storesRepo.findById(storeId)
+    if (checkStore.enabled) {
+      product.storesId = storeId;
+      product.createdAt = new Date();
+      product.updatedAt = new Date();
+      if (!product.categoriesId) {
+        const getDefaultCategory = await this.categoriesRepo.findOne({where: {name: 'Generic'}});
+        product.categoriesId = getDefaultCategory!.id ?? '';
+      }
+      return this.productsRepo.create(product);
+    } else {
+      return this.response.status(400).send('Store is not enabled');
+    }
+  }
+
+  @patch('/stores/{storeId}/enable')
+  async enableStoresById(@param.path.string('storeId') storeId: string): Promise<void> {
+    return this.storesRepo.updateById(storeId, {enabled: true, updatedAt: new Date()});
+  }
+
+  @del('/stores/{storeId}')
+  async deleteStoresById(@param.path.string('storeId') storeId: string): Promise<void> {
+    return this.storesRepo.updateById(storeId, {enabled: false, updatedAt: new Date()});
   }
 
 }

@@ -4,7 +4,7 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'inventory',
   connector: 'mongodb',
-  url: 'mongodb+srv://inventoryDB:ROJ1pErUNYkz0xC7@cluster0.omslyjy.mongodb.net/inventory?retryWrites=true&w=majority',
+  url: process.env.MONGO_URL,
   host: '',
   port: 0,
   user: '',

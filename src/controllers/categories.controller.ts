@@ -10,7 +10,8 @@ import {CategoriesRepository} from '../repositories/categories.repository';
 
 // import {inject} from '@loopback/core';
 
-
+import {authenticate} from '@loopback/authentication';
+@authenticate('jwt')
 export class CategoriesController {
   constructor(
     @repository(CategoriesRepository) protected categoriesRepo: CategoriesRepository,
@@ -80,7 +81,7 @@ export class CategoriesController {
     return this.categoriesRepo.updateById(id, category);
   }
 
-  @patch('/categories/{id}')
+  @patch('/categories/{id}/enable')
   async enableCategory(@param.path.string('id') id: string): Promise<void> {
     return this.categoriesRepo.updateById(id, {enabled: true, updatedAt: new Date()});
   }

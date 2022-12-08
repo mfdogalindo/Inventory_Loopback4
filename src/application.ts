@@ -1,14 +1,26 @@
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
+import {
+  RestExplorerBindings,
+  RestExplorerComponent
+} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent, MyUserService, UserServiceBindings
+} from '@loopback/authentication-jwt';
+import {InventoryDataSource} from './datasources';
+
 
 export {ApplicationConfig};
 
@@ -40,5 +52,14 @@ export class Inventory extends BootMixin(
         nested: true,
       },
     };
+
+    // Mount authentication system
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+    // Bind datasource
+    this.dataSource(InventoryDataSource, UserServiceBindings.DATASOURCE_NAME);
+
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
   }
 }

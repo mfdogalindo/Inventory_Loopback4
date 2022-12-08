@@ -1,0 +1,1124 @@
+{
+	"info": {
+		"_postman_id": "b58909a1-42b3-4219-9a57-bb8ed6c6447f",
+		"name": "Inventory",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8923339"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "New",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n   \"name\": \"Admin\",\n   \"email\": \"test@prueba.com\",\n   \"password\": \"S3curePass\",\n   \"username\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"var bodyToken = responseJson.token;",
+									"pm.environment.set(\"token\", bodyToken)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"email\": \"test@prueba.com\",\n   \"password\": \"S3curePass\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/users/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stores",
+			"item": [
+				{
+					"name": "Products",
+					"item": [
+						{
+							"name": "New",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"PRD003\",\n  \"name\": \"Producto Exclusivo Genial\",\n  \"description\": \"Otro producto\",\n  \"brand\": \"ACME\",\n  \"quantity\": 80,\n  \"price\": 1100,\n  \"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/stores/:storeId/products",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"stores",
+										":storeId",
+										"products"
+									],
+									"variable": [
+										{
+											"key": "storeId",
+											"value": "6390d79614801eae7922194e"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Creation OK",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"code\": \"PRD002\",\n  \"name\": \"Producto Maravilla Desactivado\",\n  \"description\": \"En realidad es un producto invisible\",\n  \"brand\": \"ACME\",\n  \"quantity\": 80,\n  \"price\": 1100,\n  \"categoriesId\": \"6391076118360220cdfde82e\",\n  \"storesId\": \"6390d79614801eae7922194e\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/stores/:storeId/products",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"stores",
+												":storeId",
+												"products"
+											],
+											"variable": [
+												{
+													"key": "storeId",
+													"value": "6390d79614801eae7922194e"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 07 Dec 2022 21:38:53 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										},
+										{
+											"key": "Content-Length",
+											"value": "342"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": \"639107ed18360220cdfde830\",\n    \"code\": \"PRD002\",\n    \"name\": \"Producto Maravilla Desactivado\",\n    \"description\": \"En realidad es un producto invisible\",\n    \"brand\": \"ACME\",\n    \"quantity\": 80,\n    \"price\": 1100,\n    \"createdAt\": \"2022-12-07T21:38:53.665Z\",\n    \"updatedAt\": \"2022-12-07T21:38:53.665Z\",\n    \"categoriesId\": \"6391076118360220cdfde82e\",\n    \"storesId\": \"6390d79614801eae7922194e\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Paginated list of products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/stores/:storeId/products",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"stores",
+										":storeId",
+										"products"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "2",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "storeId",
+											"value": "6390d79614801eae7922194e"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Paginated list of products OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/stores/:storeId/products",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"stores",
+												":storeId",
+												"products"
+											],
+											"variable": [
+												{
+													"key": "storeId",
+													"value": "6390d79614801eae7922194e"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 08 Dec 2022 16:56:02 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1177"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"_id\": \"6390d9d018b5f8afa8914184\",\n            \"code\": \"PRD001\",\n            \"name\": \"Producto Maravilla\",\n            \"description\": \"En realidad es un producto sin mucha gracia\",\n            \"brand\": \"ACME\",\n            \"quantity\": 100,\n            \"price\": 1000,\n            \"createdAt\": \"2022-12-07T18:22:08.182Z\",\n            \"updatedAt\": \"2022-12-07T18:22:08.182Z\",\n            \"storesId\": \"6390d79614801eae7922194e\",\n            \"categoriesId\": \"6390b51791ac1393a099026a\",\n            \"enabled\": true,\n            \"Categories\": {\n                \"_id\": \"6390b51791ac1393a099026a\",\n                \"code\": \"COD101A0001\",\n                \"name\": \"Generic\",\n                \"description\": \"Default category\",\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T15:45:27.094Z\",\n                \"updatedAt\": \"2022-12-07T15:57:56.250Z\"\n            }\n        },\n        {\n            \"_id\": \"6390da1018b5f8afa8914185\",\n            \"code\": \"PRD002\",\n            \"name\": \"Producto Maravilla 2\",\n            \"description\": \"En realidad es un producto un poco más gracia\",\n            \"brand\": \"ACME\",\n            \"quantity\": 80,\n            \"price\": 1100,\n            \"createdAt\": \"2022-12-07T18:23:12.850Z\",\n            \"updatedAt\": \"2022-12-07T18:23:12.850Z\",\n            \"storesId\": \"6390d79614801eae7922194e\",\n            \"categoriesId\": \"6390b51791ac1393a099026a\",\n            \"enabled\": true,\n            \"Categories\": {\n                \"_id\": \"6390b51791ac1393a099026a\",\n                \"code\": \"COD101A0001\",\n                \"name\": \"Generic\",\n                \"description\": \"Default category\",\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T15:45:27.094Z\",\n                \"updatedAt\": \"2022-12-07T15:57:56.250Z\"\n            }\n        }\n    ],\n    \"meta\": {\n        \"page\": 1,\n        \"limit\": 10\n    }\n}"
+								},
+								{
+									"name": "Second page test",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/stores/:storeId/products?limit=2&page=2",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"stores",
+												":storeId",
+												"products"
+											],
+											"query": [
+												{
+													"key": "limit",
+													"value": "2"
+												},
+												{
+													"key": "page",
+													"value": "2"
+												}
+											],
+											"variable": [
+												{
+													"key": "storeId",
+													"value": "6390d79614801eae7922194e"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 08 Dec 2022 17:29:02 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										},
+										{
+											"key": "Content-Length",
+											"value": "581"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"data\": [\n        {\n            \"_id\": \"63921d234fa28b4f7020e9e8\",\n            \"code\": \"PRD003\",\n            \"name\": \"Producto Exclusivo Genial\",\n            \"description\": \"Otro producto\",\n            \"brand\": \"ACME\",\n            \"quantity\": 80,\n            \"price\": 1100,\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-08T17:21:39.385Z\",\n            \"updatedAt\": \"2022-12-08T17:21:39.385Z\",\n            \"categoriesId\": \"6390b51791ac1393a099026a\",\n            \"storesId\": \"6390d79614801eae7922194e\",\n            \"Categories\": {\n                \"_id\": \"6390b51791ac1393a099026a\",\n                \"code\": \"COD101A0001\",\n                \"name\": \"Generic\",\n                \"description\": \"Default category\",\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T15:45:27.094Z\",\n                \"updatedAt\": \"2022-12-07T15:57:56.250Z\"\n            }\n        }\n    ],\n    \"meta\": {\n        \"page\": 2,\n        \"limit\": 2\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get all (with disabled categories)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/stores?showProducts=true",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"stores"
+							],
+							"query": [
+								{
+									"key": "showProducts",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get all (with disabled categories) OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/stores?showProducts=true",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"stores"
+									],
+									"query": [
+										{
+											"key": "showProducts",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Dec 2022 16:58:24 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1257"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"6390d79614801eae7922194e\",\n        \"name\": \"Basic Store\",\n        \"address\": \"Cll 1 # 2 34\",\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n        \"updatedAt\": \"2022-12-07T18:12:38.477Z\",\n        \"products\": [\n            {\n                \"id\": \"6390d9d018b5f8afa8914184\",\n                \"code\": \"PRD001\",\n                \"name\": \"Producto Maravilla\",\n                \"description\": \"En realidad es un producto sin mucha gracia\",\n                \"brand\": \"ACME\",\n                \"quantity\": 100,\n                \"price\": 1000,\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T18:22:08.182Z\",\n                \"updatedAt\": \"2022-12-07T18:22:08.182Z\",\n                \"categoriesId\": \"6390b51791ac1393a099026a\",\n                \"storesId\": \"6390d79614801eae7922194e\"\n            },\n            {\n                \"id\": \"6390da1018b5f8afa8914185\",\n                \"code\": \"PRD002\",\n                \"name\": \"Producto Maravilla 2\",\n                \"description\": \"En realidad es un producto un poco más gracia\",\n                \"brand\": \"ACME\",\n                \"quantity\": 80,\n                \"price\": 1100,\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T18:23:12.850Z\",\n                \"updatedAt\": \"2022-12-07T18:23:12.850Z\",\n                \"categoriesId\": \"6390b51791ac1393a099026a\",\n                \"storesId\": \"6390d79614801eae7922194e\"\n            },\n            {\n                \"id\": \"639107ed18360220cdfde830\",\n                \"code\": \"PRD002\",\n                \"name\": \"Producto Maravilla Desactivado\",\n                \"description\": \"En realidad es un producto invisible\",\n                \"brand\": \"ACME\",\n                \"quantity\": 80,\n                \"price\": 1100,\n                \"enabled\": true,\n                \"createdAt\": \"2022-12-07T21:38:53.665Z\",\n                \"updatedAt\": \"2022-12-07T21:38:53.665Z\",\n                \"categoriesId\": \"6391076118360220cdfde82e\",\n                \"storesId\": \"6390d79614801eae7922194e\"\n            }\n        ]\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "New",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"name\": \"Basic Store 2\",\n   \"address\": \"Cll 1 # 2 34\",\n   \"enabled\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/stores",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"stores"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "New OK",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"name\": \"Basic Store 2\",\n   \"address\": \"Cll 1 # 2 34\",\n   \"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/stores",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"stores"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 07 Dec 2022 19:18:31 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": {\n        \"statusCode\": 500,\n        \"message\": \"Internal Server Error\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Enable",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/stores/:id/enable",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"stores",
+								":id",
+								"enable"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390d79614801eae7922194e"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logic delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/stores/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"stores",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390d79614801eae7922194e"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/categories?showProducts=true",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories"
+							],
+							"query": [
+								{
+									"key": "showProducts",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get products by category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/categories/:id/products",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								":id",
+								"products"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390b51791ac1393a099026a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n   \"code\": \"COD101A0002\",\n   \"name\": \"Disabled\",\n   \"description\": \"Default category\",\n   \"enabled\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/categories",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"code\": \"COD101A0001\",\n   \"name\": \"Generic\",\n   \"description\": \"Default category\",\n   \"enabled\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/categories/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390b51791ac1393a099026a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enable",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/categories/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390b51791ac1393a099026a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logic delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/categories/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6390b51791ac1393a099026a"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"PRD001\",\n  \"name\": \"Producto Maravilla\",\n  \"description\": \"En realidad es un producto sin mucha gracia\",\n  \"brand\": \"ACME\",\n  \"quantity\": 100,\n  \"price\": 1000,\n  \"categoryId\": \"6390b51791ac1393a099026a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/products?showStores=true",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "showStores",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get all OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"PRD001\",\n  \"name\": \"Producto Maravilla\",\n  \"description\": \"En realidad es un producto sin mucha gracia\",\n  \"brand\": \"ACME\",\n  \"quantity\": 100,\n  \"price\": 1000,\n  \"categoryId\": \"6390b51791ac1393a099026a\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/products?showStores=true",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "showStores",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Dec 2022 17:27:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2129"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"6390d9d018b5f8afa8914184\",\n        \"code\": \"PRD001\",\n        \"name\": \"Producto Maravilla\",\n        \"description\": \"En realidad es un producto sin mucha gracia\",\n        \"brand\": \"ACME\",\n        \"quantity\": 100,\n        \"price\": 1000,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T18:22:08.182Z\",\n        \"updatedAt\": \"2022-12-07T18:22:08.182Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"6390da1018b5f8afa8914185\",\n        \"code\": \"PRD002\",\n        \"name\": \"Producto Maravilla 2\",\n        \"description\": \"En realidad es un producto un poco más gracia\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T18:23:12.850Z\",\n        \"updatedAt\": \"2022-12-07T18:23:12.850Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"639107ed18360220cdfde830\",\n        \"code\": \"PRD002\",\n        \"name\": \"Producto Maravilla Desactivado\",\n        \"description\": \"En realidad es un producto invisible\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T21:38:53.665Z\",\n        \"updatedAt\": \"2022-12-07T21:38:53.665Z\",\n        \"categoriesId\": \"6391076118360220cdfde82e\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"63921d234fa28b4f7020e9e8\",\n        \"code\": \"PRD003\",\n        \"name\": \"Producto Exclusivo Genial\",\n        \"description\": \"Otro producto\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-08T17:21:39.385Z\",\n        \"updatedAt\": \"2022-12-08T17:21:39.385Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Enable product (not used)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"PRD001\",\n  \"name\": \"Producto Maravilla\",\n  \"description\": \"En realidad es un producto sin mucha gracia\",\n  \"brand\": \"ACME\",\n  \"quantity\": 100,\n  \"price\": 1000,\n  \"categoryId\": \"6390b51791ac1393a099026a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/products/:id/enable",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products",
+								":id",
+								"enable"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Disable product (not used)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"PRD001\",\n  \"name\": \"Producto Maravilla\",\n  \"description\": \"En realidad es un producto sin mucha gracia\",\n  \"brand\": \"ACME\",\n  \"quantity\": 100,\n  \"price\": 1000,\n  \"categoryId\": \"6390b51791ac1393a099026a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/products/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get all OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"PRD001\",\n  \"name\": \"Producto Maravilla\",\n  \"description\": \"En realidad es un producto sin mucha gracia\",\n  \"brand\": \"ACME\",\n  \"quantity\": 100,\n  \"price\": 1000,\n  \"categoryId\": \"6390b51791ac1393a099026a\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/products?showStores=true",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "showStores",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Dec 2022 17:27:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2129"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"6390d9d018b5f8afa8914184\",\n        \"code\": \"PRD001\",\n        \"name\": \"Producto Maravilla\",\n        \"description\": \"En realidad es un producto sin mucha gracia\",\n        \"brand\": \"ACME\",\n        \"quantity\": 100,\n        \"price\": 1000,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T18:22:08.182Z\",\n        \"updatedAt\": \"2022-12-07T18:22:08.182Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"6390da1018b5f8afa8914185\",\n        \"code\": \"PRD002\",\n        \"name\": \"Producto Maravilla 2\",\n        \"description\": \"En realidad es un producto un poco más gracia\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T18:23:12.850Z\",\n        \"updatedAt\": \"2022-12-07T18:23:12.850Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"639107ed18360220cdfde830\",\n        \"code\": \"PRD002\",\n        \"name\": \"Producto Maravilla Desactivado\",\n        \"description\": \"En realidad es un producto invisible\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-07T21:38:53.665Z\",\n        \"updatedAt\": \"2022-12-07T21:38:53.665Z\",\n        \"categoriesId\": \"6391076118360220cdfde82e\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    },\n    {\n        \"id\": \"63921d234fa28b4f7020e9e8\",\n        \"code\": \"PRD003\",\n        \"name\": \"Producto Exclusivo Genial\",\n        \"description\": \"Otro producto\",\n        \"brand\": \"ACME\",\n        \"quantity\": 80,\n        \"price\": 1100,\n        \"enabled\": true,\n        \"createdAt\": \"2022-12-08T17:21:39.385Z\",\n        \"updatedAt\": \"2022-12-08T17:21:39.385Z\",\n        \"categoriesId\": \"6390b51791ac1393a099026a\",\n        \"storesId\": \"6390d79614801eae7922194e\",\n        \"stores\": {\n            \"id\": \"6390d79614801eae7922194e\",\n            \"name\": \"Basic Store\",\n            \"address\": \"Cll 1 # 2 34\",\n            \"enabled\": true,\n            \"createdAt\": \"2022-12-07T18:12:38.477Z\",\n            \"updatedAt\": \"2022-12-08T17:08:23.725Z\"\n        }\n    }\n]"
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}
